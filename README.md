@@ -12,7 +12,7 @@ No data is included. Every input is either public (Federal Reserve, BEA, New Yor
 | `financial_accounts/early_draft/` | `data_loader.py`, `hierarchy_parser.py`, `report_generator.py` | An earlier version that parsed the table structure from the Z.1 PDF text and printed a one-quarter summary with consistency checks. Kept to show how the pipeline developed. |
 | `repo_market/` | `process_repo.py` | Cleans daily New York Fed tri-party repo data and writes monthly, quarterly-average, and end-of-quarter totals. |
 | `repo_market/` | `RRPON_quarterly_avg.py` | Converts the Fed's daily overnight reverse repo series (FRED: RRPONTTLD) to quarterly averages, to match the quarterly Financial Accounts. |
-| `treasury_reconciliation/` | `treasury_reconciliation.py` | Pulls security-level Treasury data from CRSP through WRDS, aggregates it to quarterly market values, compares it with a FRED series, and writes a reconciliation table and chart. |
+| `treasury_reconciliation/` | `treasury_reconciliation.py` | Pulls security-level Treasury data from CRSP through WRDS, sums market values across securities each day, and compares the quarter-end total with the Dallas Fed's market value of marketable Treasury debt (FRED: MVMTD027MNFRBDAL). Writes a reconciliation table and chart. |
 
 ## Setup
 
@@ -53,4 +53,5 @@ Writes `treasury_reconciliation.csv` and `treasury_reconciliation_plot.png`.
 ## Design notes
 
 - Mixed frequencies: the repo data is daily and the Financial Accounts are quarterly. The scripts produce both quarterly averages and end-of-quarter values, so the choice can be changed later. Quarter-end repo volumes are volatile for regulatory reasons, which is why averages were the default.
+- Units: CRSP reports face value outstanding in millions of dollars and prices per $100 of face value; Z.1 levels are in millions of dollars; BEA NIPA Table 1.1.5 is in billions. The scripts convert to common units before taking ratios or differences.
 - The Financial Accounts script finds the relevant rows by their descriptions in the data dictionary rather than by hard-coded series codes. The same code therefore handles both L.210 and L.211, and still works when the Fed adds or renames sectors.

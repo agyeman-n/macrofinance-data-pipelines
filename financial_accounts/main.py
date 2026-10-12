@@ -123,8 +123,28 @@ def load_csv_dataframe(csv_path: str) -> pd.DataFrame:
 
 # --- GDP Percentage Logic ---
 
+# Z.1 Financial Accounts levels are reported in millions of dollars.
+Z1_UNITS = 'millions'
+
+def detect_gdp_units(raw: pd.DataFrame) -> str:
+    """
+    Detects the units of a BEA NIPA table from its header text, which reads
+    e.g. "[Billions of dollars]". Defaults to billions (the unit of NIPA
+    Table 1.1.5) with a warning if no unit label is found.
+    """
+    header_text = ' '.join(raw.head(10).astype(str).fillna('').values.ravel()).lower()
+    if 'billions' in header_text:
+        return 'billions'
+    if 'millions' in header_text:
+        return 'millions'
+    print("Warning: no unit label found in GDP file; assuming billions of dollars (NIPA Table 1.1.5).")
+    return 'billions'
+
 def add_gdp_pct(df: pd.DataFrame, gdp_csv_path: str) -> pd.DataFrame:
     raw = pd.read_csv(gdp_csv_path, header=None, encoding='utf-8-sig')
+    gdp_units = detect_gdp_units(raw)
+    # Convert GDP to millions so the ratio is unit-free (Z.1 is in millions)
+    gdp_to_millions = 1000.0 if gdp_units == 'billions' else 1.0
 
     col0 = raw.iloc[:, 0].astype(str).str.strip().str.lower()
     if not col0.eq('line').any():
@@ -161,7 +181,7 @@ def add_gdp_pct(df: pd.DataFrame, gdp_csv_path: str) -> pd.DataFrame:
 
     gdp_vals = [float(str(v).replace(',','').strip()) if v else float('nan') for v in gdp_raw_vals]
 
-    gdp_series = pd.Series(data=gdp_vals, index=quarters)
+    gdp_series = pd.Series(data=gdp_vals, index=quarters) * gdp_to_millions
 
     df2 = df.copy()
     norm_idx = [idx.replace(':','').upper() for idx in df2.index]

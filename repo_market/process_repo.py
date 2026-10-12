@@ -36,7 +36,7 @@ def process_repo_data(input_file_path):
         # Resample the data by calendar month ('M').
         # Use .last() to get the last reported value for each month.
         # .dropna() removes any months that had no data.
-        monthly_values = total_collateral_df[collateral_column_name].resample('M').last().dropna()
+        monthly_values = total_collateral_df[collateral_column_name].resample('ME').last().dropna()
 
         monthly_output_df = monthly_values.reset_index()
         monthly_output_df.columns = ['month', 'collateral_value']
@@ -50,8 +50,8 @@ def process_repo_data(input_file_path):
 
 
         # --- 2. Calculate and Create CSV for Quarterly Averages ---
-        # Resample the data by calendar quarter ('Q') and calculate the mean.
-        quarterly_average = total_collateral_df[collateral_column_name].resample('Q').mean().dropna()
+        # Resample the data by calendar quarter ('QE', quarter end) and calculate the mean.
+        quarterly_average = total_collateral_df[collateral_column_name].resample('QE').mean().dropna()
 
         quarterly_average_df = quarterly_average.reset_index()
         quarterly_average_df.columns = ['quarter', 'average_collateral_value']
@@ -65,8 +65,8 @@ def process_repo_data(input_file_path):
 
 
         # --- 3. Calculate and Create CSV for End-of-Quarter Values ---
-        # Resample by quarter ('Q') and get the last recorded value.
-        end_of_quarter_values = total_collateral_df[collateral_column_name].resample('Q').last().dropna()
+        # Resample by quarter ('QE') and get the last recorded value.
+        end_of_quarter_values = total_collateral_df[collateral_column_name].resample('QE').last().dropna()
 
         end_of_quarter_df = end_of_quarter_values.reset_index()
         end_of_quarter_df.columns = ['quarter', 'end_of_quarter_collateral_value']

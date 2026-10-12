@@ -24,10 +24,12 @@ def calculate_quarterly_average(input_csv_path, output_csv_path):
         # (like '.') will become NaN (Not a Number).
         df['RRPONTTLD'] = pd.to_numeric(df['RRPONTTLD'], errors='coerce')
 
-        # Step 4: Replace any NaN values with 0.
-        # This ensures that days with missing data are treated as zero
-        # in the average calculation, and quarters with no data appear as 0.
-        df['RRPONTTLD'] = df['RRPONTTLD'].fillna(0)
+        # Step 4: Drop days with missing data.
+        # FRED marks non-reporting days (weekends, holidays) with '.', so those
+        # days carry no information. Counting them as zero would pull the
+        # quarterly averages down. Days with genuinely zero usage are reported
+        # as 0 and are kept.
+        df = df.dropna(subset=['RRPONTTLD'])
 
         # Step 5: Create a new column to represent the quarter in 'YYYY:Q#' format.
         # - df['DATE'].dt.year gives the year (e.g., 2023).
