@@ -1,0 +1,17 @@
+# Data and outputs are not tracked
+*.csv
+*.xlsx
+*.txt
+!requirements.txt
+*.png
+*.pdf
+data/
+output/
+Output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+.DS_Store
