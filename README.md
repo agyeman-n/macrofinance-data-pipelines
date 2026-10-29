@@ -1,6 +1,6 @@
 # Macro-Finance Data Pipelines
 
-Python code I wrote as a summer research assistant to Professor Moritz Lenel (Princeton Economics) in 2025. The scripts build quarterly series on who holds U.S. Treasury and agency securities and on repo market activity, from Federal Reserve, BEA, New York Fed, and CRSP data.
+Python code I wrote as a summer research assistant (Princeton Economics) in 2025. The scripts build quarterly series on who holds U.S. Treasury and agency securities and on repo market activity, from Federal Reserve, BEA, New York Fed, and CRSP data.
 
 No data is included. Every input is either public (Federal Reserve, BEA, New York Fed, FRED) or licensed (CRSP via WRDS), and the sections below say where to get each file.
 
